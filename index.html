@@ -317,7 +317,7 @@ function render(filter = "") {
             });
             html += `</div>`;
         }
-    }
+     }
     list.innerHTML = html;
 }
 
@@ -402,8 +402,7 @@ async function openBigImg(code, name) {
 
 function openFullCart() {
     const f = { t: document.getElementById("f_tilaaja").value, v: document.getElementById("f_varasto").value, o: document.getElementById("f_osoite").value, p: document.getElementById("f_postinro").value, k: document.getElementById("f_paikka").value, l: document.getElementById("f_lisatiedot").value };
-  ---
-  document.getElementById("fullCartInfo").innerHTML = `<b>Tilaaja:</b> ${f.t}<br><b>Varasto:</b> ${f.v}<br><b>Osoite:</b> ${f.o}, ${f.p} ${f.k}<br><b>Lisätiedot:</b> ${f.l || '-'}`;
+    document.getElementById("fullCartInfo").innerHTML = `<b>Tilaaja:</b> ${f.t}<br><b>Varasto:</b> ${f.v}<br><b>Osoite:</b> ${f.o}, ${f.p} ${f.k}<br><b>Lisätiedot:</b> ${f.l || '-'}`;
     document.getElementById("fullCartItems").innerHTML = Object.values(cart).map(i => `<div style="padding:10px; border-bottom:1px solid #eee;">[ ] &nbsp;&nbsp; ${i.qty} kpl &nbsp;&nbsp; ${i.code} - ${i.name}</div>`).join('');
     document.getElementById("fullCartModal").style.display = "flex";
 }
