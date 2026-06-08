@@ -276,7 +276,7 @@ async function loadAllData() {
         t.split("\n").forEach(line => {
             const s = line.trim(); if(!s) return;
             const p = s.split(/\s+/);
-  mm-lines      if(p.length === 1) { parent = p[0]; relatedItems[parent] = []; }
+            if(p.length === 1) { parent = p[0]; relatedItems[parent] = []; }
             else if(parent) { relatedItems[parent].push(p[0]); }
         });
     }
@@ -361,7 +361,7 @@ function renderCart() {
                 <button class="qty-btn" onclick="updateQty('${i.code}',-1)">-</button>
                 <input type="number" class="qty-input" value="${i.qty}" oninput="setQty('${i.code}', this.value)">
                 <button class="qty-btn" onclick="updateQty('${i.code}',1)">+</button>
-            </div>
+          22112 </div>
         </div>`).join('');
 }
 
