@@ -9,8 +9,8 @@
 :root { --hw-blue:#004593; --hw-dark:#002d62; --hw-green:#28a745; --hw-gold:#fbc02d; --sidebar-w: 280px; }
 body { font-family:'Inter', sans-serif; margin:0; background:#f4f7f9; font-size:14px; color:#333; padding-bottom: 120px; }
 
-/* MOBILE HEADER */
-.mobile-header { display: none; background: var(--hw-dark); color: white; padding: 15px; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 30000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+/* MOBILE HEADER - Aina piilossa tietokoneella */
+.mobile-header { display: none !important; background: var(--hw-dark); color: white; padding: 15px; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 30000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 .mobile-header button { background: var(--hw-blue); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
 /* LOGIN & MODALS */
@@ -65,7 +65,11 @@ body { font-family:'Inter', sans-serif; margin:0; background:#f4f7f9; font-size:
 
 /* RESPONSIVE MEDIA QUERIES */
 @media (max-width: 992px) {
-    .mobile-header[style] { display: flex !important; } /* Varmistaa että näkyy mobiilissa loginin jälkeen */
+    /* Pakotetaan mobiilipalkki näkyviin VAIN mobiilikoossa */
+    #appWrapper[style*="display: block"] ~ .mobile-header,
+    body:has(#appWrapper[style*="display: block"]) .mobile-header { display: flex !important; }
+    .mobile-header { display: flex !important; }
+    
     #btnTop { right: 20px; bottom: 20px; }
     
     .nav-sidebar { position: fixed; left: 0; top: 0; transform: translateX(-100%); height: 100vh; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
@@ -85,7 +89,7 @@ body { font-family:'Inter', sans-serif; margin:0; background:#f4f7f9; font-size:
 </head>
 <body>
 
-<div class="mobile-header" id="mobileHeader" style="display:none;">
+<div class="mobile-header" id="mobileHeader">
     <button onclick="toggleSidebar('nav-sidebar')">☰ Valikko</button>
     <div style="font-weight: bold; font-size: 16px;">Hartwall Varaosat</div>
     <button onclick="toggleSidebar('cart-sidebar')" style="background:var(--hw-green)">Ostoskori (<span id="mobile-basket-count">0</span>)</button>
@@ -154,7 +158,6 @@ body { font-family:'Inter', sans-serif; margin:0; background:#f4f7f9; font-size:
     </div>
 </div>
 
-<!-- MODALS -->
 <div id="relatedOverlay">
     <div class="modal-content" style="max-width: 500px;">
         <span class="close-x" onclick="document.getElementById('relatedOverlay').style.display='none'">&times;</span>
@@ -231,7 +234,6 @@ async function doAppLogin() {
     if (sallitut[u] === p || (u === "admin" && p === "hartwall")) {
         document.getElementById("loginOverlay").style.display="none";
         document.getElementById("appWrapper").style.display="block";
-        document.getElementById("mobileHeader").style.display="flex";
         loadAllData();
     } else alert("Virhe!");
 }
@@ -264,7 +266,7 @@ async function loadAllData() {
         const t = await r3.text(); let name = null;
         t.split("\n").forEach(line => {
             let s = line.trim(); if(!s) return;
-            const parts = s.split(/\s+/);
+   guide-lines    const parts = s.split(/\s+/);
             if(parts.length === 1 || isNaN(parts[parts.length-1])) { name = s; asennusPaketit[name] = []; } 
             else if(name) asennusPaketit[name].push({ code: parts[0], qty: parseInt(parts[parts.length-1]) });
         });
