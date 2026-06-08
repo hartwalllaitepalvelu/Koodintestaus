@@ -310,7 +310,7 @@ function render(filter = "") {
                     <div style="font-weight:bold; height:34px; overflow:hidden;">${p.name}</div><div style="color:#666; font-size:11px; margin-bottom:10px;">${p.code}</div>
                     <div class="qty-area">
                         <button class="qty-btn" onclick="updateQty('${p.code}','${p.name.replace(/'/g,"\\'")}',-1)">-</button>
-                        <input type="number" class="qty-input" value="${cart[p.code]?.qty || 0}" onchange="setQty('${p.code}','${p.name.replace(/'/g,"\\'")}', this.value)">
+                        <input type="number" class="qty-input" value="${cart[p.code]?.qty || 0}" oninput="setQty('${p.code}','${p.name.replace(/'/g,"\\'")}', this.value)">
                         <button class="qty-btn" onclick="updateQty('${p.code}','${p.name.replace(/'/g,"\\'")}',1)">+</button>
                     </div>
                 </div>`;
@@ -326,10 +326,17 @@ function setQty(code, name, val) {
     const isAdding = n > (cart[code]?.qty || 0);
     if(n <= 0) delete cart[code]; else cart[code] = {code, name, qty: n};
     if(isAdding && relatedItems[code]) openRelatedPopup(code);
-    renderCart(); render(document.getElementById("filter").value);
+    renderCart(); 
+    // Ei kutsuta render()-funktiota suoraan oninputista, jotta fokusoitu tekstikenttä ei nollaudu kirjoittaessa
+    document.getElementById("basket-count").innerText = Object.keys(cart).length;
+    document.getElementById("mobile-basket-count").innerText = Object.keys(cart).length;
 }
 
-function updateQty(code, name, d) { setQty(code, name, (cart[code]?.qty || 0) + d); }
+function updateQty(code, name, d) { 
+    const currentQty = cart[code]?.qty || 0;
+    setQty(code, name, currentQty + d); 
+    render(document.getElementById("filter").value);
+}
 
 function openRelatedPopup(parentCode) {
     const div = document.getElementById("relatedContent"); div.innerHTML = "";
@@ -352,7 +359,7 @@ function renderCart() {
             <b>${i.code}</b> - ${i.name}<br>
             <div class="qty-area" style="margin-top:5px; justify-content: flex-start;">
                 <button class="qty-btn" onclick="updateQty('${i.code}','${i.name.replace(/'/g,"\\'")}',-1)">-</button>
-                <input type="number" class="qty-input" value="${i.qty}" onchange="setQty('${i.code}','${i.name.replace(/'/g,"\\'")}', this.value)">
+                <input type="number" class="qty-input" value="${i.qty}" oninput="setQty('${i.code}','${i.name.replace(/'/g,"\\'")}', this.value)">
                 <button class="qty-btn" onclick="updateQty('${i.code}','${i.name.replace(/'/g,"\\'")}',1)">+</button>
             </div>
         </div>`).join('');
@@ -377,7 +384,7 @@ function openPkgModal(name) {
 }
 
 function updatePkgItemQty(idx, d) { currentPkgItems[idx].qty = Math.max(0, currentPkgItems[idx].qty + d); document.querySelectorAll("#pkgModalItems .qty-input")[idx].value = currentPkgItems[idx].qty; }
-function confirmPkgToCart() { currentPkgItems.forEach(i => { if(i.qty > 0) setQty(i.code, findNameByCode(i.code), i.qty); }); document.getElementById("pkgModal").style.display = "none"; }
+function confirmPkgToCart() { currentPkgItems.forEach(i => { if(i.qty > 0) setQty(i.code, findNameByCode(i.code), i.qty); }); document.getElementById("pkgModal").style.display = "none"; render(document.getElementById("filter").value); }
 
 function findNameByCode(code) { for (let cat in allData) { let f = allData[cat].find(x => x.code === code); if(f) return f.name; } return code; }
 
